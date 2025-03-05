@@ -1,0 +1,243 @@
+[mca@localhost ~]$ mySQL 24mca01
+Enter password: 
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 8
+Server version: 8.0.36 Source distribution
+
+Copyright (c) 2000, 2024, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> use 24mca01
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+Database changed
+mysql> select * from students where age IN(20,25,21);
+Empty set (0.00 sec)
+
+mysql> select  from students where age IN(20,25,21);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'from students where age IN(20,25,21)' at line 1
+mysql> select * from students where age in(20,25,21);
+Empty set (0.00 sec)
+
+mysql> select * from students;
++-----------+------------+------+------+
+| studentid | name       | age  | dno  |
++-----------+------------+------+------+
+|       101 | Midhun K   |   22 |    1 |
+|       102 | Ann Mariya |   30 | NULL |
+|       103 | Sidharth M |   30 | NULL |
+|       104 | lechu      |   22 |    1 |
++-----------+------------+------+------+
+4 rows in set (0.00 sec)
+
+mysql> select studentid,name from students bookissues where students.studentid=bookissues.studentid;
+ERROR 1054 (42S22): Unknown column 'students.studentid' in 'where clause'
+mysql> select studentid,name from students bookissues where students.studentid=bookissues.bookid;
+ERROR 1054 (42S22): Unknown column 'students.studentid' in 'where clause'
+mysql> select studentid,name from students bookissues where students.studentid=bookissues.studentid;
+ERROR 1054 (42S22): Unknown column 'students.studentid' in 'where clause'
+mysql> select students.studentid,name from students bookissues where students.studentid=bookissues.studentid;
+ERROR 1054 (42S22): Unknown column 'students.studentid' in 'field list'
+mysql> select students.studentid,name from students,bookissues where students.studentid=bookissues.studentid;
++-----------+------------+
+| studentid | name       |
++-----------+------------+
+|       101 | Midhun K   |
+|       102 | Ann Mariya |
+|       103 | Sidharth M |
+|       103 | Sidharth M |
+|       104 | lechu      |
++-----------+------------+
+5 rows in set (0.00 sec)
+
+mysql> select * from boookissues;
+ERROR 1146 (42S02): Table '24mca01.boookissues' doesn't exist
+mysql> select * from bookissues;
++--------+-----------+------------+-------------+
+| bookid | studentid | issue_date | return_date |
++--------+-----------+------------+-------------+
+|      1 |       102 | 2001-09-18 | 2001-10-19  |
+|      2 |       103 | 2002-09-18 | 2002-10-19  |
+|      3 |       104 | 2003-09-18 | 2003-10-19  |
+|      3 |       103 | 2005-09-18 | 2005-10-19  |
+|      4 |       101 | 2006-09-18 | 2006-10-19  |
++--------+-----------+------------+-------------+
+5 rows in set (0.00 sec)
+
+mysql> insert into students values(105,"janeeb",25,3);
+ERROR 1452 (23000): Cannot add or update a child row: a foreign key constraint fails (`24mca01`.`students`, CONSTRAINT `students_fkey_dno` FOREIGN KEY (`dno`) REFERENCES `departments` (`dno`))
+mysql> insert into students values(105,"janeeb",25,1);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> select * from bookissues;
++--------+-----------+------------+-------------+
+| bookid | studentid | issue_date | return_date |
++--------+-----------+------------+-------------+
+|      1 |       102 | 2001-09-18 | 2001-10-19  |
+|      2 |       103 | 2002-09-18 | 2002-10-19  |
+|      3 |       104 | 2003-09-18 | 2003-10-19  |
+|      3 |       103 | 2005-09-18 | 2005-10-19  |
+|      4 |       101 | 2006-09-18 | 2006-10-19  |
++--------+-----------+------------+-------------+
+5 rows in set (0.00 sec)
+
+mysql> select students.studentid,name from students,bookissues where students.studentid=bookissues.studentid;
++-----------+------------+
+| studentid | name       |
++-----------+------------+
+|       101 | Midhun K   |
+|       102 | Ann Mariya |
+|       103 | Sidharth M |
+|       103 | Sidharth M |
+|       104 | lechu      |
++-----------+------------+
+5 rows in set (0.00 sec)
+
+mysql> select studentid,name from studentid students where studentid IN(select studentid from bookissues);
+ERROR 1146 (42S02): Table '24mca01.studentid' doesn't exist
+mysql> select studentid,name from students students where studentid IN(select studentid from bookissues);
++-----------+------------+
+| studentid | name       |
++-----------+------------+
+|       101 | Midhun K   |
+|       102 | Ann Mariya |
+|       103 | Sidharth M |
+|       104 | lechu      |
++-----------+------------+
+4 rows in set (0.00 sec)
+
+mysql> select studentid,name from students  where studentid IN(select studentid from bookissues);
++-----------+------------+
+| studentid | name       |
++-----------+------------+
+|       101 | Midhun K   |
+|       102 | Ann Mariya |
+|       103 | Sidharth M |
+|       104 | lechu      |
++-----------+------------+
+4 rows in set (0.00 sec)
+
+mysql> select * from books;
++--------+---------------------------+---------------------+--------+------------------+
+| bookid | title                     | author              | price  | publication_date |
++--------+---------------------------+---------------------+--------+------------------+
+|      1 | Database Systems          | Ramez Elmasri       | 500.00 | 1976-10-10       |
+|      2 | Operating System Concepts | Silberschatz        | 650.00 | 1960-11-20       |
+|      3 | Computer Networks         | Andrew S. Tanenbaum | 700.00 | 2000-02-17       |
+|      4 | Algorithms                | Cormen              | 100.00 | 2011-01-23       |
++--------+---------------------------+---------------------+--------+------------------+
+4 rows in set (0.00 sec)
+
+mysql> drop column publication_date from books;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'column publication_date from books' at line 1
+mysql> drop  publication_date from books;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'publication_date from books' at line 1
+mysql> select bookid,title from books where bookid NOT IN(select bookid from bookissues);
+Empty set (0.00 sec)
+
+mysql> select bookid,title from books where bookid NOT IN(select bookid from bookissues);
+Empty set (0.00 sec)
+
+mysql> select books.bookid,title from books,bookissues where books.bookid=bookissues.bookid;
++--------+---------------------------+
+| bookid | title                     |
++--------+---------------------------+
+|      1 | Database Systems          |
+|      2 | Operating System Concepts |
+|      3 | Computer Networks         |
+|      3 | Computer Networks         |
+|      4 | Algorithms                |
++--------+---------------------------+
+5 rows in set (0.00 sec)
+
+mysql> select bookid,title from books where bookid NOT IN(select bookid from bookissues);
+Empty set (0.00 sec)
+
+mysql> select bookid,title from books where bookid IN(select bookid from bookissues);
++--------+---------------------------+
+| bookid | title                     |
++--------+---------------------------+
+|      1 | Database Systems          |
+|      2 | Operating System Concepts |
+|      3 | Computer Networks         |
+|      4 | Algorithms                |
++--------+---------------------------+
+4 rows in set (0.00 sec)
+
+mysql> select * from books order by bookid SESC;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'SESC' at line 1
+mysql> select * from books order by bookid DESC;
++--------+---------------------------+---------------------+--------+------------------+
+| bookid | title                     | author              | price  | publication_date |
++--------+---------------------------+---------------------+--------+------------------+
+|      4 | Algorithms                | Cormen              | 100.00 | 2011-01-23       |
+|      3 | Computer Networks         | Andrew S. Tanenbaum | 700.00 | 2000-02-17       |
+|      2 | Operating System Concepts | Silberschatz        | 650.00 | 1960-11-20       |
+|      1 | Database Systems          | Ramez Elmasri       | 500.00 | 1976-10-10       |
++--------+---------------------------+---------------------+--------+------------------+
+4 rows in set (0.00 sec)
+
+mysql> select * from books order by bookid ASC;
++--------+---------------------------+---------------------+--------+------------------+
+| bookid | title                     | author              | price  | publication_date |
++--------+---------------------------+---------------------+--------+------------------+
+|      1 | Database Systems          | Ramez Elmasri       | 500.00 | 1976-10-10       |
+|      2 | Operating System Concepts | Silberschatz        | 650.00 | 1960-11-20       |
+|      3 | Computer Networks         | Andrew S. Tanenbaum | 700.00 | 2000-02-17       |
+|      4 | Algorithms                | Cormen              | 100.00 | 2011-01-23       |
++--------+---------------------------+---------------------+--------+------------------+
+4 rows in set (0.00 sec)
+
+mysql> select students.studentid,name from students,bookissues where students.studentid=bookissues.studentid;
++-----------+------------+
+| studentid | name       |
++-----------+------------+
+|       101 | Midhun K   |
+|       102 | Ann Mariya |
+|       103 | Sidharth M |
+|       103 | Sidharth M |
+|       104 | lechu      |
++-----------+------------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT * FROM departments;
++-----+-------+
+| dno | dname |
++-----+-------+
+|   2 | bca   |
+|   1 | mca   |
++-----+-------+
+2 rows in set (0.00 sec)
+
+mysql> select * from students;
++-----------+------------+------+------+
+| studentid | name       | age  | dno  |
++-----------+------------+------+------+
+|       101 | Midhun K   |   22 |    1 |
+|       102 | Ann Mariya |   30 | NULL |
+|       103 | Sidharth M |   30 | NULL |
+|       104 | lechu      |   22 |    1 |
+|       105 | janeeb     |   25 |    1 |
++-----------+------------+------+------+
+5 rows in set (0.00 sec)
+
+mysql> select studentid,name from students where studentid in(select studentid from bookissues)union select studentid,name from students where dno in (select dno from departments);
++-----------+------------+
+| studentid | name       |
++-----------+------------+
+|       101 | Midhun K   |
+|       102 | Ann Mariya |
+|       103 | Sidharth M |
+|       104 | lechu      |
+|       105 | janeeb     |
++-----------+------------+
+5 rows in set (0.00 sec)
+
+mysql> 
+
