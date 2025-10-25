@@ -1,0 +1,7 @@
+1. # Program to print lines having two consecutive 1's
+
+n = int(input("Enter number of lines: "))
+for i in range(n):
+    line = input()
+    if "11" in line:
+        print(line)
